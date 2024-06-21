@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateProgramRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateProgramRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::check();
     }
 
     /**
@@ -22,7 +23,14 @@ class UpdateProgramRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'duration' => 'required',
+            'user_id' => 'required|exists:users,id',
+            'workouts' => 'required|array',
+            'workouts.*.id' => 'required|exists:workouts,id',
+            'workouts.*.reps' => 'required',
+            'workouts.*.sets' => 'required',
         ];
     }
 }

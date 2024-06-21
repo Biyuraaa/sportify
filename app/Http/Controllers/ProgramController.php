@@ -107,7 +107,37 @@ class ProgramController extends Controller
      */
     public function update(UpdateProgramRequest $request, Program $program)
     {
-        //
+        $request->validated();
+
+        DB::beginTransaction();
+
+        try {
+
+            $program->update([
+                'title' => $request->title,
+                'description' => $request->description,
+                'duration' => $request->duration,
+                'user_id' => $request->user_id,
+            ]);
+
+            $program->program_workouts()->delete();
+
+            foreach ($request->workouts as $workout) {
+                ProgramWorkout::create([
+                    'program_id' => $program->id,
+                    'workout_id' => $workout['id'],
+                    'reps' => $workout['reps'],
+                    'sets' => $workout['sets'],
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('programs.index')->with('success', 'Program updated successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('programs.edit', $program->id)->with('error', 'Program failed to update: ' . $e->getMessage())->withInput();
+        }
     }
 
     /**
