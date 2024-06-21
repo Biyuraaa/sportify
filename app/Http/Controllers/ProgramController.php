@@ -99,7 +99,9 @@ class ProgramController extends Controller
      */
     public function edit(Program $program)
     {
-        return view('dashboard.programs.edit', compact('program'));
+        $program = Program::with('program_workouts.workout')->findOrFail($program->id);
+        $workouts = Workout::all();
+        return view('dashboard.programs.edit', compact('program', 'workouts'));
     }
 
     /**
