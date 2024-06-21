@@ -115,6 +115,9 @@ class ProgramController extends Controller
      */
     public function destroy(Program $program)
     {
-        //
+        $program->program_workouts()->delete();
+        $program->delete();
+
+        return redirect()->route('programs.index')->with('success', 'Program deleted successfully');
     }
 }

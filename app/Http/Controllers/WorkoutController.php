@@ -126,7 +126,7 @@ class WorkoutController extends Controller
 
     public function destroy(Workout $workout)
     {
-        $workout->programs()->delete();
+        $workout->program_workouts()->delete();
 
         $workout->delete();
 
